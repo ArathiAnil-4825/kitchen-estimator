@@ -1,20 +1,20 @@
 import { useState } from "react";
-import { AuthAPI } from "../api";
 import { useNavigate } from "react-router-dom";
+import { AuthService } from "../store";
 
 export default function Register() {
-  const [form, setForm] = useState({ username: "", email: "", password: "", role:"Homeowner"});
+  const [form, setForm] = useState({ name: "", email: "", password: "", role: "Homeowner" });
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const submit = async (e) => {
+  const submit = (e) => {
     e.preventDefault();
+    setError("");
     try {
-      await AuthAPI.register(form);
+      AuthService.register(form);
       navigate("/login");
-    } catch (e) {
-      setError("Registration failed",e);
-      console.log(e);
+    } catch (err) {
+      setError(err.message || "Registration failed");
     }
   };
 
@@ -27,7 +27,7 @@ export default function Register() {
           <div className="row g-3">
             <div className="col-md-6">
               <label className="form-label">Name</label>
-              <input className="form-control" value={form.username} onChange={(e)=>setForm({...form,username:e.target.value})} required />
+              <input className="form-control" value={form.name} onChange={(e)=>setForm({...form,name:e.target.value})} required />
             </div>
             <div className="col-md-6">
               <label className="form-label">Email</label>
@@ -41,9 +41,7 @@ export default function Register() {
               <label className="form-label">Role</label>
               <select className="form-control" value={form.role} onChange={(e)=>setForm({...form,role:e.target.value})}>
                 <option>Homeowner</option>
-                <option>Interior Designer</option>
                 <option>Contractor</option>
-                <option>Administrator</option>
               </select>
             </div>
           </div>
